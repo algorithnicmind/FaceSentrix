@@ -5,6 +5,7 @@ FaceSentrix - Utility Functions
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.utils.class_weight import compute_class_weight
 
 # The 7 universal emotion categories for FaceSentrix
 EMOTION_LABELS = {
@@ -44,6 +45,18 @@ def load_processed_data(data_dir="data/processed"):
         print(f"Error loading data: {e}")
         print("Please ensure you have run the preprocessing pipeline FIRST.")
         return None, None, None, None, None, None
+
+def get_balanced_class_weights(y_train):
+    """
+    Computes class weights to handle dataset imbalance (e.g., Disgust being 1.5%).
+    Returns a dictionary mapping class label to its computed weight.
+    """
+    class_weights = compute_class_weight(
+        class_weight='balanced',
+        classes=np.unique(y_train),
+        y=y_train
+    )
+    return dict(enumerate(class_weights))
 
 def visualize_sample(image, label_id):
     """
