@@ -5,3 +5,33 @@
 # ---- Documentation (internal/dev docs) ----
 docs/
 
+# ---- Python environments & dev ----
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env.bak/
+venv.bak/
+
+# ---- Secrets ----
+.env
+.env.local
+
+# ---- IDEs & Editors ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Data & Models ----
+data/raw/
+data/processed/
+models/*.h5
+models/*.tflite
+models/*.pkl
+
+# ---- Logs ----
+*.log
