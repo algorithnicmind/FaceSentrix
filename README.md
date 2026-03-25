@@ -1,210 +1,159 @@
 <p align="center">
-  <img src="../assets/banner.png" alt="FaceSentrix Banner" width="800"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=250&section=header&text=FaceSentrix&fontSize=80&animation=fadeIn&fontAlignY=35" alt="FaceSentrix Header" width="100%"/>
 </p>
 
-<h1 align="center">📘 FaceSentrix — Project Documentation</h1>
+<h1 align="center">📘 FaceSentrix — Real-Time Emotion Recognition System</h1>
 
 <p align="center">
-  <b>Real-Time Face Detection & Emotion Recognition System</b><br/>
-  <i>Powered by Python · OpenCV · CNN / Deep Learning</i>
+  <b>Advanced Face Detection & Emotion Classification Pipeline</b><br/>
+  <i>Powered by 🐍 Python · 👁️ OpenCV · 🧠 Deep Learning (CNN)</i>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge" alt="status"/>
-  <img src="https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python" alt="python"/>
-  <img src="https://img.shields.io/badge/OpenCV-4.x-green?style=for-the-badge&logo=opencv" alt="opencv"/>
-  <img src="https://img.shields.io/badge/TensorFlow-2.x-orange?style=for-the-badge&logo=tensorflow" alt="tensorflow"/>
+  <img src="https://img.shields.io/badge/Status-Active%20Development-success?style=for-the-badge&logo=github" alt="status"/>
+  <img src="https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python&logoColor=white" alt="python"/>
+  <img src="https://img.shields.io/badge/OpenCV-4.x-green?style=for-the-badge&logo=opencv&logoColor=white" alt="opencv"/>
+  <img src="https://img.shields.io/badge/TensorFlow-2.x-orange?style=for-the-badge&logo=tensorflow&logoColor=white" alt="tensorflow"/>
+  <img src="https://img.shields.io/badge/License-CC0_1.0-lightgrey?style=for-the-badge" alt="license"/>
 </p>
 
 ---
 
-## 🧠 Project Overview
+## 🌟 Project Overview
 
-**FaceSentrix** is a real-time emotion detection system that identifies human faces from a live camera feed and classifies their emotional state using deep learning (CNN). It is designed to be lightweight, extensible, and deployable across platforms.
+**FaceSentrix** is a highly interactive, real-time emotion detection system designed to identify human faces from live camera feeds (or videos/images) and classify their emotional states using a meticulously optimized Convolutional Neural Network (CNN).
 
 ### 🎯 Core Objectives
 
 | # | Objective | Description |
 |---|-----------|-------------|
-| 1 | **Face Detection** | Detect one or multiple faces in real-time from a webcam or video stream using Haar Cascades or DNN-based detectors |
-| 2 | **Emotion Classification** | Predict emotional states — **Happy, Sad, Angry, Surprise, Fear, Disgust, Neutral** — using a trained CNN model |
-| 3 | **Real-Time Processing** | Achieve smooth, low-latency inference suitable for live camera feeds (target: ≥15 FPS) |
-| 4 | **Visual Feedback** | Display bounding boxes around detected faces with emotion labels and confidence scores overlaid |
-| 5 | **Model Training Pipeline** | Build an end-to-end training pipeline: data → preprocessing → augmentation → model → evaluation |
+| 1 | 📸 **Face Detection** | Real-time face localization using OpenCV (Haar Cascades / DNN). |
+| 2 | 🧠 **Emotion Classification** | Categorizes expressions into **Happy, Sad, Angry, Surprise, Fear, Disgust, Neutral**. |
+| 3 | ⚡ **Low Latency** | Optimized for smooth, live camera feed processing (target: ≥15-30 FPS). |
+| 4 | 📊 **Visual Feedback** | Dynamic bounding boxes with confidence meters and labels overlaid on faces. |
+| 5 | 🚀 **Scalable Pipeline** | End-to-end framework: Data Preparation → Augmentation → Training → Inference. |
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Interactive System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FaceSentrix Pipeline                     │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│   ┌──────────┐    ┌──────────────┐    ┌─────────────────┐       │
-│   │  Camera   │───▶│  Face Detect │───▶│ Emotion Classify│       │
-│   │  Input    │    │  (OpenCV)    │    │  (CNN Model)    │       │
-│   └──────────┘    └──────────────┘    └────────┬────────┘       │
-│                                                │                │
-│                                       ┌────────▼────────┐       │
-│                                       │  Display Output │       │
-│                                       │  (Labels + Box) │       │
-│                                       └─────────────────┘       │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+The architecture of FaceSentrix leverages a streamlined data flow ensuring minimal latency from capture to classification.
+
+```mermaid
+graph TD
+    A[📷 Camera / Video Input] -->|Raw Frame| B[🔍 Face Detection Layer]
+    B -->|Bounding Box coords| C[✂️ Face Extraction & Preprocessing]
+    C -->|Normalized 48x48 Image| D[🧠 CNN Emotion Classifier]
+    D -->|Softmax Probabilities| E[📊 Visualization Engine]
+    B -.->|Pass Frame| E
+    E -->|Annotated Frame| F[🖥️ Display / UI]
+
+    classDef input fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000;
+    classDef process fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000;
+    classDef model fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000;
+    classDef output fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000;
+
+    class A input;
+    class B,C process;
+    class D model;
+    class E,F output;
 ```
 
 ---
 
 ## 🧰 Technology Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Language** | Python 3.8+ | Core programming language |
-| **Computer Vision** | OpenCV 4.x | Camera access, face detection, image processing |
-| **Deep Learning** | TensorFlow / Keras | CNN model building, training, and inference |
-| **Data Handling** | NumPy, Pandas | Numerical operations & dataset management |
-| **Visualization** | Matplotlib, Seaborn | Training metrics plots, confusion matrices |
-| **Model Serving** | TensorFlow Lite *(optional)* | Lightweight model for edge deployment |
-| **Dataset** | FER-2013 / AffectNet | Labeled facial expression images for training |
-
----
-
-## 📁 Planned Project Structure
-
-```
-FaceSentrix/
-├── 📄 README.md                  # Main project README
-├── 📄 LICENSE                    # CC0 1.0 Universal License
-├── 📄 .gitignore                 # Git ignore rules
-├── 📄 requirements.txt           # Python dependencies
-├── 📄 setup.py                   # Package setup (optional)
-│
-├── 📂 data/                      # Dataset storage
-│   ├── raw/                      # Original FER-2013 data
-│   ├── processed/                # Preprocessed & augmented images
-│   └── README.md                 # Dataset documentation
-│
-├── 📂 models/                    # Trained model files
-│   ├── emotion_model.h5          # Saved Keras model
-│   ├── emotion_model.tflite      # TFLite converted model (optional)
-│   └── training_history.json     # Training metrics log
-│
-├── 📂 src/                       # Source code
-│   ├── __init__.py
-│   ├── face_detector.py          # Face detection module
-│   ├── emotion_classifier.py     # Emotion prediction module
-│   ├── camera.py                 # Webcam capture module
-│   ├── visualizer.py             # Overlay rendering (bounding boxes, labels)
-│   └── utils.py                  # Utility functions
-│
-├── 📂 training/                  # Model training scripts
-│   ├── train.py                  # Main training script
-│   ├── evaluate.py               # Model evaluation & metrics
-│   ├── preprocess.py             # Data preprocessing pipeline
-│   └── augment.py                # Data augmentation strategies
-│
-├── 📂 notebooks/                 # Jupyter notebooks
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_model_training.ipynb
-│   └── 03_evaluation.ipynb
-│
-├── 📂 tests/                     # Unit & integration tests
-│   ├── test_face_detector.py
-│   ├── test_emotion_classifier.py
-│   └── test_camera.py
-│
-├── 📂 assets/                    # Static assets (images, banners)
-│   └── banner.png
-│
-├── 📂 docs/                      # Documentation (gitignored)
-│   ├── README.md                 # This file
-│   ├── TODO.md                   # Project roadmap & task list
-│   ├── ARCHITECTURE.md           # Detailed architecture docs
-│   ├── MODEL_DESIGN.md           # CNN model design decisions
-│   ├── DATASET_GUIDE.md          # Dataset setup & preprocessing guide
-│   └── DEPLOYMENT.md             # Deployment instructions
-│
-└── 📂 app/                       # Web/Desktop app (Phase 3)
-    ├── app.py                    # Flask/Streamlit app entry
-    ├── templates/
-    └── static/
-```
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="25%"><b>Language</b><br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="50" alt="Python"/><br/>Python 3.8+</td>
+      <td align="center" width="25%"><b>Computer Vision</b><br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/opencv/opencv-original.svg" height="50" alt="OpenCV"/><br/>OpenCV 4.x</td>
+      <td align="center" width="25%"><b>Deep Learning</b><br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" height="50" alt="TensorFlow"/><br/>TensorFlow / Keras</td>
+      <td align="center" width="25%"><b>Data Science</b><br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" height="50" alt="Pandas"/><br/>NumPy, Pandas</td>
+    </tr>
+  </table>
+</div>
 
 ---
 
 ## 📊 Emotion Classes
 
-The model will classify faces into **7 universal emotion categories**:
+FaceSentrix is trained to recognize the 7 universal facial expressions.
 
-| # | Emotion | Description | Example Use Case |
-|---|---------|-------------|-----------------|
-| 0 | 😡 **Angry** | Frustration, irritation | Customer feedback analysis |
-| 1 | 🤢 **Disgust** | Revulsion, distaste | Product reaction testing |
-| 2 | 😨 **Fear** | Anxiety, apprehension | Safety & security systems |
-| 3 | 😊 **Happy** | Joy, satisfaction | User experience monitoring |
-| 4 | 😢 **Sad** | Sorrow, disappointment | Mental health screening |
-| 5 | 😮 **Surprise** | Shock, amazement | Engagement detection |
-| 6 | 😐 **Neutral** | Calm, expressionless | Baseline comparison |
+| Emotion | Visual | Description | Application Example |
+|---------|:---:|-------------|-----------------|
+| **Angry** | 😡 | Eyebrows down, lips pressed | Customer frustration tracking |
+| **Disgust**| 🤢 | Wrinkled nose, raised upper lip | Product reaction testing |
+| **Fear** | 😨 | Raised eyebrows, tensed lips | Safety & threat assessment |
+| **Happy** | 😊 | Smiling, raised cheeks | UX & Satisfaction monitoring |
+| **Sad** | 😢 | Frowning, lowered eyes | Mental well-being screening |
+| **Surprise**| 😮 | Widened eyes, open mouth | Content engagement metrics |
+| **Neutral**| 😐 | Relaxed facial muscles | Baseline behavioral context |
 
 ---
 
-## 🔗 Documentation Index
+## 📁 Project Structure
 
-| Document | Description |
-|----------|-------------|
-| [📋 TODO.md](./TODO.md) | Complete project roadmap with step-by-step tasks |
-| [🏗️ ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture & design patterns |
-| [🧠 MODEL_DESIGN.md](./MODEL_DESIGN.md) | CNN model architecture & training strategy |
-| [📦 DATASET_GUIDE.md](./DATASET_GUIDE.md) | Dataset download, setup & preprocessing |
-| [🚀 DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment & production guide |
+```bash
+FaceSentrix/
+├── 📄 README.md                  # Main project README
+├── 📄 LICENSE                    # CC0 1.0 Universal License
+├── 📄 .gitignore                 # Git ignore rules
+├── 📄 requirements.txt           # Python dependencies
+├── 📂 data/                      # Dataset handling (raw & processed)
+├── 📂 models/                    # Saved CNN models (.h5, .tflite)
+├── 📂 src/                       # Core Source Code (Detector, Classifier, Visualizer)
+├── 📂 training/                  # Training scripts and preprocessing
+├── 📂 notebooks/                 # Jupyter exploration & analysis notebooks
+├── 📂 tests/                     # Unit & integration testing
+├── 📂 assets/                    # Project visual assets
+├── 📂 docs/                      # Extensive internal documentation
+└── 📂 app/                       # Deployment apps (Web/API)
+```
+
+---
+
+## 🔗 Deep-Dive Documentation
+
+For detailed insights into specific parts of the project, check out our comprehensive docs:
+
+- 👉 [**Project Roadmap (TODO)**](./docs/TODO.md): Step-by-step feature tracker.
+- 👉 [**System Architecture**](./docs/ARCHITECTURE.md): Deep dive into data flow and module design.
+- 👉 [**Model Design**](./docs/MODEL_DESIGN.md): CNN structure, parameters, and tuning.
+- 👉 [**Dataset Guide**](./docs/DATASET_GUIDE.md): FER-2013 processing and imbalance handling.
+- 👉 [**Deployment Options**](./docs/DEPLOYMENT.md): API, Web App, Docker, and Edge instructions.
 
 ---
 
 ## 🚀 Quick Start (Preview)
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/algorithnicmind/FaceSentrix.git
 cd FaceSentrix
 
-# Create virtual environment
+# 2. Setup Virtual Environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
 
-# Install dependencies
+# 3. Install Dependencies
 pip install -r requirements.txt
 
-# Download the dataset
-python training/preprocess.py --download
-
-# Train the model
-python training/train.py --epochs 50 --batch-size 64
-
-# Run real-time detection
+# 4. Run the Real-Time Camera Detection
 python src/camera.py
 ```
 
 ---
 
-## 📈 Expected Performance Targets
+## 🛠️ Contribution & Development Philosophy
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| **Detection FPS** | ≥ 15 FPS | On standard webcam with CPU |
-| **Model Accuracy** | ≥ 65% | On FER-2013 test set |
-| **Inference Time** | < 50ms | Per frame (detection + classification) |
-| **Model Size** | < 50MB | For easy distribution |
-| **Face Detection Rate** | ≥ 95% | For frontal faces |
+FaceSentrix follows a rigorous **"commit-per-change"** workflow. Every logical step, file creation, or code adjustment is isolated into its own granular git commit. This method ensures an atomic, reversible, and highly readable development history. 
 
 ---
 
-## 🤝 Contributing
-
-This project follows a **commit-per-change** workflow. Every modification — no matter how small — gets its own commit. This ensures a clear, traceable development history.
-
----
-
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer"/>
+</p>
 <p align="center">
   <b>Built with ❤️ by <a href="https://github.com/algorithnicmind">AlgorithmicMind</a></b>
 </p>
