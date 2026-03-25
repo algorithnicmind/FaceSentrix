@@ -1,0 +1,7 @@
+# ========================
+# FaceSentrix - .gitignore
+# ========================
+
+# ---- Documentation (internal/dev docs) ----
+docs/
+
