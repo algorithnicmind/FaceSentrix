@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 # Ensure root directory is in sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.utils import get_emotion_label
+from src.utils import EMOTION_LABELS
 
 def evaluate_model():
     print("Loading test data...")
@@ -40,7 +40,7 @@ def evaluate_model():
     print("-" * 50)
     
     # Classification Report
-    emotion_labels = [get_emotion_label(i) for i in range(7)]
+    emotion_labels = [EMOTION_LABELS[i] for i in range(7)]
     print("\nClassification Report:")
     print(classification_report(y_true, y_pred, target_names=emotion_labels))
     
