@@ -28,7 +28,10 @@ def evaluate_model():
     print("Predicting on test set...")
     y_pred_probs = model.predict(X_test, batch_size=64)
     y_pred = np.argmax(y_pred_probs, axis=1)
-    y_true = np.argmax(y_test, axis=1)
+    if len(y_test.shape) > 1 and y_test.shape[1] > 1:
+        y_true = np.argmax(y_test, axis=1)
+    else:
+        y_true = y_test
     
     # Accuracy and F1
     acc = accuracy_score(y_true, y_pred)
