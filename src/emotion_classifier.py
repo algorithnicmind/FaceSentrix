@@ -84,6 +84,19 @@ class EmotionClassifier:
         self.model = model
         return model
 
+    def preprocess_face(self, face_img, target_size=(48, 48)):
+        """
+        Resizes, normalizes, and reshapes a raw grayscale face crop for model input.
+        """
+        import cv2
+        # Resize to model input shape
+        face_resized = cv2.resize(face_img, target_size)
+        # Normalize pixel values
+        face_norm = face_resized.astype('float32') / 255.0
+        # Reshape to (48, 48, 1)
+        face_final = np.expand_dims(face_norm, axis=-1)
+        return face_final
+
     def predict(self, face_image):
         """
         Predicts the emotion for a single preprocessed face image.

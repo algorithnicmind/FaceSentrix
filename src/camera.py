@@ -67,15 +67,18 @@ def main():
             face_img = f['face_image']
             
             try:
-                # Normalization matching the training parameters
-                face_norm = face_img.astype('float32') / 255.0
-                class_id, conf, _ = classifier.predict(face_norm)
+                # 1. Standardize input (Resize, Normalize, Reshape)
+                face_final = classifier.preprocess_face(face_img)
+                
+                # 2. Inference
+                class_id, conf, _ = classifier.predict(face_final)
                 emotion_label = labels.get(class_id, "Unknown")
                 
-                # Render Overlay Graphics
+                # 3. Render Overlay Graphics
                 Visualizer.draw_bounding_box(frame, box, emotion_label, conf)
             except Exception as e:
-                # Failsafe if the CNN model isn't built yet
+                # Failsafe if the CNN model isn't built yet or prediction fails
+                print(f"[DEBUG] Inference error: {e}")
                 Visualizer.draw_bounding_box(frame, box, "Untrained", 0.0)
 
         # 3. Telemetry: Framerate computation
