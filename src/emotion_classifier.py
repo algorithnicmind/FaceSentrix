@@ -87,12 +87,19 @@ class EmotionClassifier:
     def preprocess_face(self, face_img, target_size=(48, 48)):
         """
         Resizes, normalizes, and reshapes a raw grayscale face crop for model input.
+        Includes CLAHE for lighting robustness.
         """
         import cv2
+        # Apply CLAHE to enhance contrast and normalize lighting
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        face_enhanced = clahe.apply(face_img)
+        
         # Resize to model input shape
-        face_resized = cv2.resize(face_img, target_size)
+        face_resized = cv2.resize(face_enhanced, target_size)
+        
         # Normalize pixel values
         face_norm = face_resized.astype('float32') / 255.0
+        
         # Reshape to (48, 48, 1)
         face_final = np.expand_dims(face_norm, axis=-1)
         return face_final
