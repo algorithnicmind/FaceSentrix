@@ -2,8 +2,10 @@
 # FaceSentrix - .gitignore
 # ========================
 
-# ---- Documentation (internal/dev docs) ----
-docs/
+# ---- Core Documentation ----
+# Keep docs/ for tracking TODO.md and architecture
+!docs/
+!docs/*.md
 
 # ---- Python environments & dev ----
 venv/
@@ -26,12 +28,16 @@ venv.bak/
 *.swp
 *.swo
 
-# ---- Data & Models ----
+# ---- Data & Models (Binary Files) ----
 data/raw/
-data/processed/
+data/processed/*.npy
 models/*.h5
 models/*.tflite
 models/*.pkl
+models/training_log.csv
 
-# ---- Logs ----
+# ---- Logs & Temporary ----
+logs/
 *.log
+.DS_Store
+Thumbs.db
