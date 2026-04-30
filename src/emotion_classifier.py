@@ -34,27 +34,18 @@ class EmotionClassifier:
             
     def build_model(self, input_shape=(48, 48, 1), num_classes=7):
         """
-        Builds the Convolutional Neural Network architecture based on our specs.
-        Returns the uncompiled Sequential model.
+        Builds an optimized, deep CNN architecture for efficient facial feature extraction.
         """
         model = Sequential([
-            # Block 1: Feature Extraction
-            Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=input_shape),
-            BatchNormalization(),
-            Conv2D(32, (3, 3), padding='same', activation='relu'),
-            BatchNormalization(),
-            MaxPooling2D(pool_size=(2, 2)),
-            Dropout(0.25),
-            
-            # Block 2
-            Conv2D(64, (3, 3), padding='same', activation='relu'),
+            # Block 1: Initial Feature Maps
+            Conv2D(64, (3, 3), padding='same', activation='relu', input_shape=input_shape),
             BatchNormalization(),
             Conv2D(64, (3, 3), padding='same', activation='relu'),
             BatchNormalization(),
             MaxPooling2D(pool_size=(2, 2)),
             Dropout(0.25),
             
-            # Block 3
+            # Block 2: Secondary Features
             Conv2D(128, (3, 3), padding='same', activation='relu'),
             BatchNormalization(),
             Conv2D(128, (3, 3), padding='same', activation='relu'),
@@ -62,7 +53,7 @@ class EmotionClassifier:
             MaxPooling2D(pool_size=(2, 2)),
             Dropout(0.25),
             
-            # Block 4
+            # Block 3: Higher-level Patterns
             Conv2D(256, (3, 3), padding='same', activation='relu'),
             BatchNormalization(),
             Conv2D(256, (3, 3), padding='same', activation='relu'),
@@ -70,7 +61,15 @@ class EmotionClassifier:
             MaxPooling2D(pool_size=(2, 2)),
             Dropout(0.25),
             
-            # Classification Head
+            # Block 4: Complex Structural Features
+            Conv2D(512, (3, 3), padding='same', activation='relu'),
+            BatchNormalization(),
+            Conv2D(512, (3, 3), padding='same', activation='relu'),
+            BatchNormalization(),
+            MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.25),
+            
+            # Advanced Classification Head
             Flatten(),
             Dense(512, activation='relu'),
             BatchNormalization(),
