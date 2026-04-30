@@ -11,9 +11,11 @@ class FaceDetector:
     Handles face localization in video frames using OpenCV Haar Cascades.
     """
     
-    def __init__(self, backend="haar", scale_factor=1.3, min_neighbors=5):
+    def __init__(self, backend="haar", scale_factor=1.1, min_neighbors=6):
         """
-        Initializes the chosen detector backend.
+        Initializes the chosen detector backend with optimized parameters.
+        scale_factor=1.1: more accurate (checks more scales)
+        min_neighbors=6: fewer false positives
         """
         self.backend = backend.lower()
         self.scale_factor = scale_factor
