@@ -51,32 +51,35 @@ def train_model(epochs=50, batch_size=64):
     
     # 6. Configure Callbacks
     os.makedirs('models', exist_ok=True)
+    os.makedirs('logs', exist_ok=True)
     
     checkpoint = ModelCheckpoint(
         filepath='models/emotion_model.h5',
         monitor='val_accuracy',
         save_best_only=True,
+        mode='max',
         verbose=1
     )
     
     early_stop = EarlyStopping(
         monitor='val_accuracy',
-        patience=10,
+        patience=15, # Increased patience for deeper model
         restore_best_weights=True,
         verbose=1
     )
     
     reduce_lr = ReduceLROnPlateau(
         monitor='val_accuracy',
-        factor=0.5,
+        factor=0.2,
         patience=5,
         min_lr=1e-7,
         verbose=1
     )
     
     csv_logger = CSVLogger('models/training_log.csv')
+    tensorboard = tf.keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=1)
     
-    callbacks = [checkpoint, early_stop, reduce_lr, csv_logger]
+    callbacks = [checkpoint, early_stop, reduce_lr, csv_logger, tensorboard]
     
     # 7. Start Training
     print("Beginning Training Loop...")
