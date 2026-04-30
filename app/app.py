@@ -26,8 +26,12 @@ EMOTION_LABELS = get_class_labels()
 def index():
     return render_template('index.html')
 
+# Global state for smoothing (In a production app, use session-based or client-ID based tracking)
+prediction_history = {} # face_id -> moving_average_probs
+
 @app.route('/predict', methods=['POST'])
 def predict():
+    global prediction_history
     try:
         # 1. Get base64 image from request
         data = request.get_json()
@@ -44,7 +48,7 @@ def predict():
         faces = detector.detect_faces(frame)
         
         results = []
-        for f in faces:
+        for i, f in enumerate(faces):
             box = f['box']
             face_img = f['face_image']
             
@@ -52,13 +56,30 @@ def predict():
             face_final = classifier.preprocess_face(face_img)
             class_id, confidence, probs = classifier.predict(face_final)
             
-            # 5. Format results
+            # 5. Apply Smoothing (EMA)
+            # Simplified: Use index as ID for this session
+            face_id = f"face_{i}"
+            if face_id in prediction_history:
+                # Alpha=0.3 for smooth transitions
+                prediction_history[face_id] = 0.7 * prediction_history[face_id] + 0.3 * probs
+            else:
+                prediction_history[face_id] = probs
+            
+            smoothed_probs = prediction_history[face_id]
+            smoothed_class_id = np.argmax(smoothed_probs)
+            smoothed_conf = smoothed_probs[smoothed_class_id]
+            
+            # 6. Format results
             results.append({
                 "box": [int(x) for x in box],
-                "emotion": EMOTION_LABELS.get(class_id, "Unknown"),
-                "confidence": float(confidence),
-                "probabilities": {EMOTION_LABELS[i]: float(p) for i, p in enumerate(probs)}
+                "emotion": EMOTION_LABELS.get(smoothed_class_id, "Unknown"),
+                "confidence": float(smoothed_conf),
+                "probabilities": {EMOTION_LABELS[j]: float(p) for j, p in enumerate(smoothed_probs)}
             })
+
+        # Clear history if no faces detected to reset for next person
+        if not faces:
+            prediction_history = {}
 
         return jsonify({
             "success": True,
