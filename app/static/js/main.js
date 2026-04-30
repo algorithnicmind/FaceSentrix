@@ -1,12 +1,13 @@
 /**
- * FaceSentrix - Frontend Logic
+ * FaceSentrix - Advanced HUD Controller
  */
 
 const video = document.getElementById('webcam-feed');
 const canvas = document.getElementById('overlay');
 const ctx = canvas.getContext('2d');
-const probContainer = document.getElementById('prob-container');
+const metricContainer = document.getElementById('metric-container');
 const toggleBtn = document.getElementById('toggle-cam');
+const captureBtn = document.getElementById('capture-btn');
 
 const emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"];
 let isStreaming = false;
@@ -16,37 +17,34 @@ let stream = null;
 async function startWebcam() {
     try {
         stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: 640, height: 480 } 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 } } 
         });
         video.srcObject = stream;
         isStreaming = true;
         
-        // Match canvas size to video once loaded
         video.onloadedmetadata = () => {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            document.getElementById('res-val').innerText = `${video.videoWidth}x${video.videoHeight}`;
-            processFrame(); // Start pipeline
+            document.getElementById('res-val').innerText = `${video.videoWidth}X${video.videoHeight}`;
+            processFrame();
         };
     } catch (err) {
-        console.error("Error accessing webcam:", err);
-        alert("Could not access webcam. Please ensure permissions are granted.");
+        console.error("Critical System Error:", err);
+        alert("HUD Initialization Failed: Webcam access denied.");
     }
 }
 
-// 2. Main Processing Loop
+// 2. High-Performance Processing Loop
 async function processFrame() {
     if (!isStreaming) return;
 
-    // Capture frame from video
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = video.videoWidth;
     tempCanvas.height = video.videoHeight;
     const tempCtx = tempCanvas.getContext('2d');
     tempCtx.drawImage(video, 0, 0);
 
-    const base64Image = tempCanvas.toDataURL('image/jpeg', 0.7);
-
+    const base64Image = tempCanvas.toDataURL('image/jpeg', 0.6);
     const startTime = performance.now();
 
     try {
@@ -60,93 +58,109 @@ async function processFrame() {
         const endTime = performance.now();
         
         if (data.success) {
-            drawOverlays(data.results);
-            updateStats(data.results, (endTime - startTime).toFixed(0));
+            renderHUD(data.results);
+            updateBiometrics(data.results, (endTime - startTime).toFixed(0));
         }
     } catch (err) {
-        console.error("Prediction error:", err);
+        console.error("Data Stream Interrupted:", err);
     }
 
-    // Schedule next frame (approx 5-10 FPS for stability)
-    setTimeout(processFrame, 100);
+    setTimeout(processFrame, 60); // Target ~15 FPS for smooth HUD feel
 }
 
-// 3. Visualization
-function drawOverlays(results) {
+// 3. Cyberpunk HUD Rendering
+function renderHUD(results) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    document.getElementById('face-count').innerText = results.length;
+    document.getElementById('face-count').innerText = String(results.length).padStart(2, '0');
 
     results.forEach(res => {
         const [x, y, w, h] = res.box;
+        const color = getEmotionColor(res.emotion);
         
-        // Draw Box
-        ctx.strokeStyle = '#00d2ff';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(x, y, w, h);
+        // Target Brackets (Corners only)
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        const len = w * 0.2;
+        
+        // TL
+        ctx.beginPath(); ctx.moveTo(x, y + len); ctx.lineTo(x, y); ctx.lineTo(x + len, y); ctx.stroke();
+        // TR
+        ctx.beginPath(); ctx.moveTo(x + w - len, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + len); ctx.stroke();
+        // BL
+        ctx.beginPath(); ctx.moveTo(x, y + h - len); ctx.lineTo(x, y + h); ctx.lineTo(x + len, y + h); ctx.stroke();
+        // BR
+        ctx.beginPath(); ctx.moveTo(x + w - len, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - len); ctx.stroke();
 
-        // Draw Label Background
-        ctx.fillStyle = '#00d2ff';
-        ctx.font = 'bold 16px Inter';
-        const labelText = `${res.emotion} (${(res.confidence * 100).toFixed(0)}%)`;
-        const textWidth = ctx.measureText(labelText).width;
-        ctx.fillRect(x, y - 25, textWidth + 10, 25);
-
-        // Draw Text
-        ctx.fillStyle = '#fff';
-        ctx.fillText(labelText, x + 5, y - 7);
+        // HUD Data Label
+        ctx.fillStyle = color;
+        ctx.font = '700 12px "JetBrains Mono"';
+        const labelText = `ID:TARGET_ALPHA // ${res.emotion.toUpperCase()} [${(res.confidence * 100).toFixed(0)}%]`;
+        ctx.fillText(labelText, x, y - 10);
+        
+        // Scanning effect for box
+        ctx.fillStyle = `rgba(${hexToRgb(color)}, 0.05)`;
+        ctx.fillRect(x, y, w, h);
     });
 }
 
-function updateStats(results, inferenceTime) {
-    document.getElementById('inf-val').innerText = `${inferenceTime}ms`;
-    
+function updateBiometrics(results, latency) {
+    document.getElementById('inf-val').innerText = `${latency}MS`;
     if (results.length === 0) return;
 
-    // Use the first detected face for the side-panel bars
-    const mainFace = results[0];
-    const probs = mainFace.probabilities;
-
+    const probs = results[0].probabilities;
     let html = '';
     emotions.forEach(emo => {
         const val = (probs[emo] * 100).toFixed(1);
         html += `
-            <div class="prob-item">
-                <div class="prob-info"><span>${emo}</span><span>${val}%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${val}%; background: ${getEmotionColor(emo)}"></div>
+            <div class="metric-row">
+                <div class="metric-header"><span>${emo.toUpperCase()}</span><span>${val}%</span></div>
+                <div class="metric-bar-bg">
+                    <div class="metric-bar-fill" style="width: ${val}%; background: ${getEmotionColor(emo)}"></div>
                 </div>
             </div>
         `;
     });
-    probContainer.innerHTML = html;
+    metricContainer.innerHTML = html;
 }
 
 function getEmotionColor(emotion) {
     const colors = {
         "Happy": "#39ff14",
-        "Sad": "#00d2ff",
-        "Angry": "#ff4444",
+        "Sad": "#00f2ff",
+        "Angry": "#ff2d55",
         "Surprise": "#ffff44",
-        "Neutral": "#a1a1a6",
+        "Neutral": "#7000ff",
         "Fear": "#ff8844",
-        "Disgust": "#aa44ff"
+        "Disgust": "#ff00ff"
     };
-    return colors[emotion] || "#fff";
+    return colors[emotion] || "#00f2ff";
 }
 
-// 4. Control Event Listeners
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 242, 255';
+}
+
+// 4. Interface Controls
 toggleBtn.addEventListener('click', () => {
     if (isStreaming) {
         stream.getTracks().forEach(track => track.stop());
         isStreaming = false;
-        toggleBtn.innerText = "Start Camera";
+        toggleBtn.innerText = "Activate Stream";
+        toggleBtn.classList.remove('active-btn');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     } else {
         startWebcam();
-        toggleBtn.innerText = "Stop Camera";
+        toggleBtn.innerText = "Deactivate Stream";
+        toggleBtn.classList.add('active-btn');
     }
 });
 
-// Auto-start
+captureBtn.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = `FaceSentrix_Scan_${Date.now()}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg');
+    link.click();
+});
+
 startWebcam();
