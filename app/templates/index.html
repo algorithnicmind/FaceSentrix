@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceSentrix | Real-Time Emotion AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FaceSentrix</h1>
+            <div class="status-badge">● Real-Time Pipeline Active</div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Side: Video Feed -->
+            <div class="video-section">
+                <video id="webcam-feed" autoplay playsinline></video>
+                <canvas id="overlay"></canvas>
+            </div>
+
+            <!-- Right Side: Sidebar -->
+            <div class="sidebar">
+                <!-- Emotion Dashboard -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>📊 Real-Time Analytics</span>
+                    </div>
+                    
+                    <div id="prob-container">
+                        <!-- Bars will be injected here by JS -->
+                        <div class="prob-item">
+                            <div class="prob-info"><span>Neutral</span><span>0%</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detection Info -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>🔍 Detection Metadata</span>
+                    </div>
+                    <div id="meta-info">
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Resolution: <span id="res-val">---</span><br>
+                            Inference: <span id="inf-val">---</span><br>
+                            Faces Detected: <span id="face-count">0</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="toggle-cam" class="btn btn-primary">Stop Camera</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js for future deeper analytics if needed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
