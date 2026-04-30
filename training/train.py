@@ -77,9 +77,8 @@ def train_model(epochs=50, batch_size=64):
     )
     
     csv_logger = CSVLogger('models/training_log.csv')
-    tensorboard = tf.keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=1)
     
-    callbacks = [checkpoint, early_stop, reduce_lr, csv_logger, tensorboard]
+    callbacks = [checkpoint, early_stop, reduce_lr, csv_logger]
     
     # 7. Start Training
     print("Beginning Training Loop...")
