@@ -44,7 +44,7 @@ async function processFrame() {
     const tempCtx = tempCanvas.getContext('2d');
     tempCtx.drawImage(video, 0, 0);
 
-    const base64Image = tempCanvas.toDataURL('image/jpeg', 0.6);
+    const base64Image = tempCanvas.toDataURL('image/jpeg', 0.9); // Increased quality
     const startTime = performance.now();
 
     try {
@@ -58,14 +58,16 @@ async function processFrame() {
         const endTime = performance.now();
         
         if (data.success) {
-            renderHUD(data.results);
-            updateBiometrics(data.results, (endTime - startTime).toFixed(0));
+            // Filter results for quality (only show if confidence > 35%)
+            const filteredResults = data.results.filter(r => r.confidence > 0.35);
+            renderHUD(filteredResults);
+            updateBiometrics(filteredResults, (endTime - startTime).toFixed(0));
         }
     } catch (err) {
         console.error("Data Stream Interrupted:", err);
     }
 
-    setTimeout(processFrame, 60); // Target ~15 FPS for smooth HUD feel
+    setTimeout(processFrame, 50); // Faster polling
 }
 
 // 3. Cyberpunk HUD Rendering
